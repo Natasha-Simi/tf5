@@ -35,7 +35,9 @@
     </style>
 
 <head>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajaxy/1.6.1/scripts/jquery.ajaxy.min.js" integrity="sha512-bztGAvCE/3+a1Oh0gUro7BHukf6v7zpzrAb3ReWAVrt+bVNNphcl2tDTKCBr5zk7iEDmQ2Bv401fX3jeVXGIcA==" crossorigin="anonymous"></script>
+ <script type = "text/javascript" 
+         src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js">
+      </script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -63,11 +65,7 @@
 </head>
 
 <body class="fix-header">
-    <div class="preloader">
-        <svg class="circular" viewBox="25 25 50 50">
-            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" />
-        </svg>
-    </div>
+   
     <div id="wrapper">
         <nav class="navbar navbar-default navbar-static-top m-b-0">
             <div class="navbar-header">
@@ -119,7 +117,7 @@
                                 
                             
                                 <form>
-                                    <select class="box" name="myselect" id="flooroptions" ;>
+                                    <select class="box" name="myselect" id="flooroptions" onchange="myFunction(event)">
                                      <?php
                                         
                                         
@@ -147,35 +145,11 @@
                                 </li> 
                             
                                 <form>
-                                <?php
-                                   
+                              <select id="s2" name="roomName" class='box' onchange="myFunction2(event)">
+                                  
+                              </select>
                                      
-
-                                        
-                                        
-                        $cat = $_GET['cat'];              
-                        $sql2= "SELECT roomName FROM floor WHERE floorNumber = ? ";
-                        if($stmt=$conn->prepare($sql2)){
-                            $stmt->bind_param('s', $cat);
-                            $stmt->execute();
-                            $r_set=$stmt->get_result();
-
-                            echo "<select id=s2 name=roomName class='box'>";
-
-
-                        }
-
-                        
-                        
-                        while($row=$r_set->fetch_assoc()){
-                            echo"<option value= $row[roomName]>$row[roomName]</option>";
-                        }
-                        echo "</select>";
-                         ?>
-                                     
-                               
-                                
-                                
+                    
                                 </form>
                                 
                             </ul>
@@ -260,7 +234,6 @@
     </div>
     </div>
         
- 
     <script src="plugins/bower_components/jquery/dist/jquery.min.js"></script>
     <!-- Bootstrap Core JavaScript -->
     <script src="bootstrap/dist/js/bootstrap.min.js"></script>
@@ -278,7 +251,87 @@
     <!-- Custom Theme JavaScript -->
     <script src="js/custom.min.js"></script>
     <script src="plugins/bower_components/toast-master/js/jquery.toast.js"></script>
+    
+
+    <script type="text/javascript">
        
+           function myFunction(event)
+           {
+                
+                var e = document.getElementById("flooroptions");
+                var floor_id = e.value;
+
+                $.ajax({
+
+                    url:'ajax_floor.php',
+                    type:'post',
+                    data:{
+                        floor_id:floor_id,
+                    },
+                    dataType:"json",
+                    success:function(response){
+                        $('#s2 option').remove();
+                        console.table(response);
+                        for (var i = 0; i < response.length; i++) 
+                        {
+                            var option ="<option value=''>"+"SELECT ROOM"+
+                                            
+                                        "</option>"+
+
+                                        "<option value='"+response[i].floorNumber+"'>"
+                                            +response[i].roomName+
+                                        "</option>";
+                            $('#s2').append(option);
+                        }
+                        // var options = "<option value='"++"'>"
+
+                       // $.each (response, function (bb) {
+                       //      console.log (bb);
+                       //      console.log (response[bb]);
+                       //      // console.log (a[bb].TEST1);
+                       //  });
+                        // json_decode(response);
+                        // console.log(response);
+                        // for (var i = 0; i < response.length; i++) 
+                        // {
+                        //     console.log(response[i].roomName);
+                        // }
+                    }
+                   
+                });
+
+               
+                // console.log(e.value);
+
+            }      
+
+            function myFunction2(event) 
+            {
+                
+                var rname = document.getElementById("s2");
+                var name = rname.value;
+
+                $.ajax({
+
+                        url:'ajax_table.php',
+                        type:'post',
+                        data:{
+                            rname:name,
+                        },
+                        dataType:"json",
+                        success:function(response)
+                        {
+                            console.table(response);
+                        }
+
+                })
+         // body...
+            }     
+
+          
+    </script>
+
+
 </body>
 
 </html>
