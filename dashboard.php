@@ -124,6 +124,7 @@
                                         
                         $sql= "SELECT DISTINCT floorNumber FROM floor";
                         $result = mysqli_query($conn, $sql);
+                        echo"<option value=".">"."CHOOSE FLOOR"."</option>";
                         while($row=mysqli_fetch_array($result)){
                             echo"<option value=".$row['floorNumber'].">".$row['floorNumber']."</option>";
                         }
@@ -272,12 +273,15 @@
                     success:function(response){
                         $('#s2 option').remove();
                         console.table(response);
+
+                        var holder ="<option value=''>"+"SELECT ROOM"+
+                                            
+                                        "</option>";
+                            $('#s2').append(holder);
+
                         for (var i = 0; i < response.length; i++) 
                         {
-                            var option ="<option value=''>"+"SELECT ROOM"+
-                                            
-                                        "</option>"+
-
+                            var option =
                                         "<option value='"+response[i].floorNumber+"'>"
                                             +response[i].roomName+
                                         "</option>";
