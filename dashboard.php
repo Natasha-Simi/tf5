@@ -12,7 +12,10 @@
             $_SESSION['username']=$profile_data['username'];
         }
       
-    
+       // $_SESSION['id'] = 7;
+        
+//You'll replace the value with the  actual session ID
+        $sesh = 7;
     ?>
     
 
@@ -184,6 +187,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <input type="hidden" name="u_id" value=" <?php echo $sesh; ?>" id="u_id">
                                    <!--  <th>   
                                                           
                                         </th>
@@ -214,7 +218,8 @@
                                     
                                 </table> 
                                 <div class="center p-20">
-                     <a href="submit" target="_blank" class="btn btn-danger btn-block waves-effect waves-light" style="width:20%; aligh:left">submit</a>
+                                    <button class="btn btn-danger btn-block waves-effect waves-light" style="width:20%; aligh:left" id="submit">SUBMIT</button>
+                   <!--   <a href="submit" target="_blank" class="btn btn-danger btn-block waves-effect waves-light" style="width:20%; aligh:left">submit</a> -->
                                     </div>
                 </div>
                     </div>
@@ -335,25 +340,41 @@
                           success: function (msg) 
                           {
                             console.table(msg);
+                        if (msg.length > 0)
+                        {
+
+
 
                             for (var i = 0; i < msg.length; i++) 
                             {
                                 var tr_str = "<tr>"+
-                                            "<td>"+msg[i].assetName+"</td>"+
+                                            "<td id='a_name'>"+msg[i].assetName+"</td>"+
                                             "<td>"+
-                                            "<select>"+
+                                            "<select id='status'>"+
                                             "<option value='0'>"+"Faulty"+"</option>"+
                                             "<option value='1'>"+"Fine"+"</option>"+
                                             "</select>"+
                                             "</td>"+
                                             "<td>"+
-                                                "<textarea>"+"</textarea>"+
+                                                "<textarea id='desc'>"+"</textarea>"+
                                             "</td>"+
                                             "</tr>";
                                             $("#tableData tbody").append(tr_str);
                             }
 
-                             
+                              }
+                            else
+                            {
+                                 var tr_str = "<tr>"+
+                                            "<td>"+"NO DATA AVAILABLE"+"</td>"+
+                                            "<td>"+
+                                           "<td>"+"</td>"+
+                                            "<td>"+
+                                    
+                                            "</td>"+
+                                            "</tr>";
+                                            $("#tableData tbody").append(tr_str);
+                            }
 
 
                           },
@@ -365,6 +386,44 @@
          // body...
             }     
 
+            $('#submit').on('click',function(e){
+                e.preventDefault();
+                // console.log('prevented');
+
+                var asset = document.getElementById('a_name').textContent;
+                var status = $('#status').val();
+                var desc = $('#desc').val();
+                var u_id = $('#u_id').val();
+                // console.log(u_id);
+
+                $.ajax(
+                        {
+                          type: "POST",
+                          url: "ajax_report.php",
+                          data: {
+                                    asset:asset,
+                                    status:status,
+                                    desc:desc,
+                                    u_id:u_id,
+                                },
+                          dataType: "text json",
+                          statusCode: {
+                            404: function ()
+                            {
+                              alert('Method not found!');
+                            }
+                          },
+                          success: function (response) 
+                          {
+                            alert(response.Response);
+                          },
+                          error: function (msg) {
+                            console.table(msg.status);
+                          }
+                        });
+
+
+            });
           
     </script>
 
