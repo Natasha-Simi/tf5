@@ -1,5 +1,9 @@
  <?php
 
+ 	// echo "here";
+
+ 	// echo $_POST['name'];
+
  	function returnData($id)
  	{
  		$servername = "localhost";
@@ -26,7 +30,7 @@
 		}
  	}
 
- 	returnData("Training Room 1");
+ 	returnData($_POST['name']);
 	
-	// $conn = null;
+	$conn = null;
 ?> 

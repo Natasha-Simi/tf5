@@ -146,7 +146,7 @@
                                 </li> 
                             
                                 <form>
-                              <select id="s2" name="roomName" class='box' onchange="myFunction2(event)">
+                              <select id="s2" name="roomName" class='box' onchange="roomNameSelect(event)">
                                   
                               </select>
                                      
@@ -174,7 +174,7 @@
                                     <h4><span id='display'></span></h4>
                           
                             <div class="table-responsive">
-                                <table class="table">
+                                <table class="table" id="tableData">
                                     <thead>
                                         <tr>
                                             <th>Asset Name</th>
@@ -184,7 +184,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    <th>   
+                                   <!--  <th>   
                                                           
                                         </th>
                                     <th>
@@ -208,7 +208,7 @@
                                         </th>
                                         
                                         
-                                        
+                                         -->
                                     </tbody>
                                     
                                     
@@ -272,7 +272,7 @@
                     dataType:"json",
                     success:function(response){
                         $('#s2 option').remove();
-                        console.table(response);
+                        // console.table(response);
 
                         var holder ="<option value=''>"+"SELECT ROOM"+
                                             
@@ -282,7 +282,7 @@
                         for (var i = 0; i < response.length; i++) 
                         {
                             var option =
-                                        "<option value='"+response[i].floorNumber+"'>"
+                                        "<option value='"+response[i].roomName+"'>"
                                             +response[i].roomName+
                                         "</option>";
                             $('#s2').append(option);
@@ -309,26 +309,59 @@
 
             }      
 
-            function myFunction2(event) 
+            function roomNameSelect(event) 
             {
                 
                 var rname = document.getElementById("s2");
                 var name = rname.value;
 
-                $.ajax({
+                $("#tableData tr").remove();
+                console.log(name);
 
-                        url:'ajax_table.php',
-                        type:'post',
-                        data:{
-                            rname:name,
-                        },
-                        dataType:"json",
-                        success:function(response)
+               $.ajax(
                         {
-                            console.table(response);
-                        }
+                          type: "POST",
+                          url: "ajax_table.php",
+                          data: {
+                                    name:name,
+                                },
+                          dataType: "json",
+                          statusCode: {
+                            404: function ()
+                            {
+                              alert('Method not found!');
+                            }
+                          },
+                          success: function (msg) 
+                          {
+                            console.table(msg);
 
-                })
+                            for (var i = 0; i < msg.length; i++) 
+                            {
+                                var tr_str = "<tr>"+
+                                            "<td>"+msg[i].assetName+"</td>"+
+                                            "<td>"+
+                                            "<select>"+
+                                            "<option value='0'>"+"Faulty"+"</option>"+
+                                            "<option value='1'>"+"Fine"+"</option>"+
+                                            "</select>"+
+                                            "</td>"+
+                                            "<td>"+
+                                                "<textarea>"+"</textarea>"+
+                                            "</td>"+
+                                            "</tr>";
+                                            $("#tableData tbody").append(tr_str);
+                            }
+
+                             
+
+
+                          },
+                          error: function (msg) {
+                            alert('Error!!!')
+                          }
+                        });
+
          // body...
             }     
 
