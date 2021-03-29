@@ -16,6 +16,26 @@
         
 //You'll replace the value with the  actual session ID
         $sesh = 7;
+
+        $servername = "localhost";
+        $username = "root";
+        $password = "";
+        $dbname = "centum";
+    
+          $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+          $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+          $stmt = $conn->prepare("SELECT report.assetTag,report.description,report.date, asset.roomName
+FROM report
+INNER JOIN asset ON report.assetTag = asset.assetName
+WHERE report.status=0
+;");
+          // $stmt->bindParam('id',$id);
+          $stmt->execute();
+          $stmt->setFetchMode(PDO::FETCH_ASSOC);
+          $data = $stmt->fetchAll();
+
+          // var_dump($data);
+
     ?>
     
 
@@ -108,127 +128,43 @@
                 
                   <div class="row bg-title">
                     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-                        <h4 class="page-title">Daily Asset Checkup </h4> </div>
+                        <h4 class="page-title">Faulty Assets</h4> </div>
                     <!-- /.col-lg-12 -->
                 </div>
-                <div class="row">
-                   
-                    <div class="col-lg-6 col-sm-6 col-xs-12">
-                        <div class="white-box analytics-info">
-                            <h3 class="box-title">Select Floor</h3>
-                            <ul class="list-inline two-part">
-                                
-                            
-                                <form>
-                                    <select class="box" name="myselect" id="flooroptions" onchange="myFunction(event)">
-                                     <?php
-                                        
-                                        
-                                        
-                        $sql= "SELECT DISTINCT floorNumber FROM floor";
-                        $result = mysqli_query($conn, $sql);
-                        echo"<option value=".">"."CHOOSE FLOOR"."</option>";
-                        while($row=mysqli_fetch_array($result)){
-                            echo"<option value=".$row['floorNumber'].">".$row['floorNumber']."</option>";
-                        }
-                         ?>
-                                     
-                                </select>
-                                
-                                </form>
-                                
-                            </ul>
-                        </div>
-                    </div>    
-                    <div class="col-lg-6 col-sm-6 col-xs-12">
-                        <div class="white-box analytics-info" id="roomoptions">
-                            <h3 class="box-title">Select Room</h3>
-                            <ul class="list-inline two-part">
-                                <li>
-                                    <div id="sparklinedash2"></div>
-                                </li> 
-                            
-                                <form>
-                              <select id="s2" name="roomName" class='box' onchange="roomNameSelect(event)">
-                                  
-                              </select>
-                                     
-                    
-                                </form>
-                                
-                            </ul>
-                        </div>
-                    </div>   
-                    <script>
-                    //function reload(){
+               
+               <div class="row">
+                   <div class="col-10 col-sm-12 col-md-10">
+                       <table class="table bg-white p-3">
+                           <thead>
+                               <th>Asset Name</th>
+                               <th>Floor</th>
+                               <th>Description</th>
+                               <th>Date</th>
+                           </thead>
+                           <tbody>
+                               
+                            <?php 
 
-                       // var v1= document.getElementById('flooroptions').value;
-                        //self.location= 'dashboard.php?cat=' + v1;
-                    //}
-                    
-                    </script>   
+                                // var_dump($data);
+                                for ($i=0; $i < sizeof($data) ; $i++) 
+                                    { ?>
+                                    <tr>
+                                    <td><?php echo $data[$i]['assetTag'] ?></td>
+                                    <td><?php echo $data[$i]['roomName'] ?></td>
+                                    <td><?php echo $data[$i]['description'] ?></td>
+                                    <td><?php echo $data[$i]['date'] ?></td>
+                                    </tr>
+                               <?php }
+
+                             ?>
+
+                           </tbody>
+                       </table>
+                   </div>
+               </div>
                    
                    
-                <div class="row">
-                    <!-- .col -->
-                    <div class="col-md-12 col-lg- col-sm-12">
-                        <div class="white-box" >
-                         <h3 class="box-title">Asset Check List</h3>
-                                    <h4><span id='display'></span></h4>
-                          
-                            <div class="table-responsive">
-                                <table class="table" id="tableData">
-                                    <thead>
-                                        <tr>
-                                            <th>Asset Name</th>
-                                            <th>Status</th>
-                                            <th>Description</th>
-                                        
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <input type="hidden" name="u_id" value="7" id="u_id">
-                                   <!--  <th>   
-                                                          
-                                        </th>
-                                    <th>
-                                        <select class="box">
-                                            
-                                            <option>Functional</option>
-                                            <option>Faulty</option>
-                                        
-                                        </select>
-                                        
-                                        </th>
-                                    <th> 
-                                       
-                                          <p>
-          <textarea id = "myTextArea"
-                  rows = "1"
-                  cols = "30"></textarea>
-        </p>
-                                        
-                                        
-                                        </th>
-                                        
-                                        
-                                         -->
-                                    </tbody>
-                                    
-                                    
-                                </table> 
-                                <div class="center p-20">
-                                    <button class="btn btn-danger btn-block waves-effect waves-light" style="width:20%; aligh:left" id="submit">SUBMIT</button>
-                   <!--   <a href="submit" target="_blank" class="btn btn-danger btn-block waves-effect waves-light" style="width:20%; aligh:left">submit</a> -->
-                                    </div>
-                </div>
-                    </div>
-                    
-                            
-                       
-                    
-            </div>
-                    </div>
+               
             <!-- /.container-fluid -->
             <footer class="footer text-center"> Tier Data </footer>
         </div>
@@ -259,7 +195,7 @@
     <script src="plugins/bower_components/toast-master/js/jquery.toast.js"></script>
     
 
-    <script type="text/javascript">
+   <!--  <script type="text/javascript">
        
            function myFunction(event)
            {
@@ -435,7 +371,7 @@
 
             });
           
-    </script>
+    </script> -->
 
 
 </body>
